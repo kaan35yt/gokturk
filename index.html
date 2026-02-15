@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GÖKTÜRK ONLINE V69 - HAKANIN GÜCÜ</title>
+    <title>GÖKTÜRK ONLINE V69.2 - KUTLU ÜLKÜ</title>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,75 +13,50 @@
         * { box-sizing: border-box; font-family: 'Orbitron', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { margin: 0; background: var(--bg); color: #e0e0e0; height: 100vh; overflow: hidden; }
         .container { width: 100%; max-width: 450px; height: 100vh; margin: auto; display: flex; flex-direction: column; background: #000; position: relative; border: 1px solid #222; }
-        
-        /* Kayıt/Giriş Ekranı */
+        #global-announcement { position:fixed; top:-100px; left:0; width:100%; background:var(--red); padding:15px; text-align:center; font-weight:bold; z-index:10002; transition:0.5s; }
         #auth-screen { position: fixed; inset: 0; background: radial-gradient(circle, #1a1a1a, #000); z-index: 9999; padding: 20px; overflow-y: auto; text-align: center; }
         .auth-card { background: rgba(20,20,20,0.9); border: 1px solid var(--gold); padding: 20px; border-radius: 15px; margin-top: 20px; }
         input, select { width: 100%; padding: 12px; margin: 8px 0; background: #111; border: 1px solid #444; color: #fff; border-radius: 8px; }
-        
-        /* Header & Bar */
         .header { padding: 10px; background: #080808; border-bottom: 2px solid var(--gold); display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; font-size: 10px; text-align: center; }
         .panel { display: none; padding: 15px; height: calc(100vh - 160px); overflow-y: auto; padding-bottom: 90px; }
         .active { display: block; }
-        
-        /* Kartlar */
         .card { background: var(--card); border: 1px solid #333; padding: 12px; border-radius: 12px; margin-bottom: 10px; position: relative; }
-        .btn-gold { background: var(--gold); color: #000; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; transition: 0.2s; }
-        .btn-gold:active { transform: scale(0.95); }
-        
-        /* Profil & Admin */
-        .p-frame { width: 90px; height: 90px; border: 4px solid var(--gold); border-radius: 50%; margin: auto; position: relative; box-shadow: 0 0 15px var(--gold); }
+        .btn-gold { background: var(--gold); color: #000; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; }
+        .p-frame { width: 90px; height: 90px; border: 4px solid var(--gold); border-radius: 50%; margin: auto; position: relative; }
         .p-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-        .adm-section { border-left: 3px solid var(--red); padding-left: 10px; margin-top: 15px; }
-
-        /* Envanter */
         .inv-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
-        .slot { aspect-ratio: 1; background: #111; border: 1px solid #333; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 24px; position: relative; }
+        .slot { aspect-ratio: 1; background: #111; border: 1px solid #333; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
         .slot.equipped { border-color: var(--cyan); box-shadow: inset 0 0 10px var(--cyan); }
-
         .bottom-nav { position: absolute; bottom: 0; width: 100%; display: grid; grid-template-columns: repeat(6, 1fr); height: 80px; background: #080808; border-top: 1px solid #222; }
         .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #555; font-size: 9px; }
         .nav-item.active { color: var(--gold); }
+        .rank-tag { font-size: 9px; color: var(--gold); font-weight: bold; display: block; margin-top: 2px; }
     </style>
 </head>
 <body>
 
-<div id="global-announcement" style="position:fixed; top:-100px; left:0; width:100%; background:var(--red); padding:15px; text-align:center; font-weight:bold; z-index:10002; transition:0.5s;">🔱 DUYURU</div>
+<div id="global-announcement">🔱 DUYURU</div>
 
 <div id="auth-screen">
-    <h1 style="color:var(--gold); font-family:'Metamorphous'; margin-bottom:0;">GÖKTÜRK</h1>
-    <p style="font-size:10px; color:#aaa; margin-top:5px;">ONLINE MMORPG V69</p>
-
+    <h1 style="color:var(--gold); font-family:'Metamorphous';">GÖKTÜRK ONLINE</h1>
     <div id="auth-box" class="auth-card">
-        <div id="tab-buttons" style="display:flex; gap:10px; margin-bottom:15px;">
-            <button onclick="toggleAuth(true)" class="btn-gold">Giriş Yap</button>
-            <button onclick="toggleAuth(false)" class="btn-gold" style="background:#333; color:#fff;">Kayıt Ol</button>
+        <div style="display:flex; gap:10px; margin-bottom:15px;">
+            <button onclick="toggleAuth(true)" id="btn-login" class="btn-gold">Giriş Yap</button>
+            <button onclick="toggleAuth(false)" id="btn-reg" class="btn-gold" style="background:#333; color:#fff;">Kayıt Ol</button>
         </div>
-
         <input type="text" id="auth-u" placeholder="Alp Adı">
         <input type="password" id="auth-p" placeholder="Şifre">
-
         <div id="reg-fields" style="display:none;">
-            <select id="reg-char">
-                <option value="Bozkurt">🐺 Bozkurt (Hız)</option>
-                <option value="Noyan">⚔️ Noyan (Güç)</option>
-                <option value="Baksı">🔮 Baksı (Dua)</option>
-            </select>
-            <select id="reg-oba">
-                <option value="Kayı">🚩 Kayı Obası</option>
-                <option value="Kınık">🚩 Kınık Obası</option>
-                <option value="Bayat">🚩 Bayat Obası</option>
-            </select>
-            <select id="reg-din">
-                <option value="Tengrizm">🏹 Gök Tengri</option>
-                <option value="İslam">🕌 İslamiyet</option>
-            </select>
+            <select id="reg-char"><option value="Bozkurt">🐺 Bozkurt</option><option value="Noyan">⚔️ Noyan</option></select>
+            <select id="reg-oba"><option value="Kayı">Kayı Obası</option><option value="Kınık">Kınık Obası</option></select>
+            <select id="reg-din"><option value="Tengrizm">Gök Tengri</option><option value="İslam">İslamiyet</option></select>
         </div>
-        <button onclick="processAuth()" class="btn-gold" style="margin-top:10px;">OTAĞA GİRİŞ</button>
+        <button onclick="processAuth()" class="btn-gold" style="margin-top:10px;">OTAĞA GİR</button>
     </div>
 </div>
 
 <div class="container" id="game-ui" style="display:none;">
+    <div id="otuken-bar" style="background:linear-gradient(90deg, #111, #300, #111); color:var(--gold); font-size:10px; text-align:center; padding:5px; border-bottom:1px solid #400;">🏰 ÖTÜKEN HAKİMİ: <span id="otuken-owner" style="font-weight:bold; text-shadow:0 0 5px red;">---</span></div>
     <div class="header">
         <div>🪙 <span id="v-gold">0</span></div>
         <div>⚡ <span id="v-en">100</span></div>
@@ -91,49 +66,29 @@
 
     <div id="p-home" class="panel active">
         <div class="card" style="text-align:center;">
-            <div class="p-frame" onclick="document.getElementById('img-in').click()">
+            <div class="p-frame" id="v-frame" onclick="document.getElementById('img-in').click()">
                 <img id="v-img" src="https://via.placeholder.com/80" class="p-img">
             </div>
             <input type="file" id="img-in" style="display:none" onchange="uploadImg(this)">
-            <h3 id="v-name" style="margin:5px 0;">---</h3>
-            <div id="v-title" style="color:var(--gold); font-size:12px; font-weight:bold;">[ALP]</div>
-            <div id="v-oba" style="color:var(--cyan); font-size:11px;">---</div>
-            
+            <h3 id="v-name" style="margin:5px 0 0 0;">---</h3>
+            <span id="v-rank-text" class="rank-tag">YENİ ALP</span>
+            <div id="v-oba" style="color:var(--cyan); font-size:11px; margin-top:5px;">---</div>
             <button onclick="doPray()" class="btn-gold" style="margin-top:10px; background:var(--green); color:white;">🙏 DUA ET (+10 Enerji)</button>
         </div>
 
         <div id="admin-area" style="display:none;">
-            <div class="card adm-section">
-                <h4 style="color:var(--red); margin:0 0 10px 0;">🔱 HAKAN PANELİ</h4>
-                <div class="grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:5px;">
-                    <button onclick="adminCmd('gold')" class="btn-gold" style="font-size:10px;">+999K ALTIN</button>
-                    <button onclick="adminCmd('lvl')" class="btn-gold" style="font-size:10px;">+99 LVL</button>
-                </div>
-                <input type="text" id="adm-duyuru" placeholder="Duyuru Mesajı..." style="margin-top:5px;">
-                <button onclick="adminCmd('duyuru')" class="btn-gold" style="background:var(--red); color:white;">YAYINLA</button>
-            </div>
-
-            <div class="card adm-section" style="border-left-color:var(--cyan);">
-                <h4 style="color:var(--cyan); margin:0 0 10px 0;">🛡️ ETKİNLİK PANELİ</h4>
-                <div class="grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:5px;">
+            <div class="card" style="border-left:3px solid var(--red);">
+                <h4 style="color:var(--red); margin:0 0 10px 0;">🔱 HAKAN & ETKİNLİK PANELİ</h4>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px;">
+                    <button onclick="adminCmd('gold')" class="btn-gold">ALTIN EKLE</button>
+                    <button onclick="adminCmd('lvl')" class="btn-gold">LVL ATLAT</button>
                     <button onclick="setEvent('2x_gold')" class="btn-gold">2X ALTIN</button>
                     <button onclick="setEvent('2x_speed')" class="btn-gold">2X HIZ</button>
                 </div>
-            </div>
-
-            <div class="card adm-section" style="border-left-color:var(--gold);">
-                <h4 style="color:var(--gold); margin:0 0 10px 0;">🎁 EMANET PANELİ</h4>
-                <input type="text" id="target-user" placeholder="Oyuncu Adı">
-                <button onclick="adminGiveEmanet()" class="btn-gold">KUTSAL EMANET GÖNDER</button>
+                <input type="text" id="adm-duyuru" placeholder="Ferman yayınla..." style="margin-top:5px;">
+                <button onclick="adminCmd('duyuru')" class="btn-gold" style="background:var(--red); color:white;">DUYURU AT</button>
             </div>
         </div>
-    </div>
-
-    <div id="p-market" class="panel">
-        <h3 style="color:var(--gold);">📦 KUTSAL KASALAR</h3>
-        <div id="kasa-list" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;"></div>
-        <h3 style="color:var(--cyan); margin-top:20px;">⚔️ SİLAH VE ZIRHLAR</h3>
-        <div id="market-list" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;"></div>
     </div>
 
     <div id="p-event" class="panel">
@@ -141,16 +96,23 @@
         <div id="sefer-list"></div>
     </div>
 
+    <div id="p-market" class="panel">
+        <h3 style="color:var(--gold);">📦 KUTSAL KASALAR</h3>
+        <div id="kasa-list" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;"></div>
+        <h3 style="color:var(--cyan); margin-top:20px;">⚔️ PAZAR</h3>
+        <div id="market-list" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;"></div>
+    </div>
+
     <div id="p-inv" class="panel">
         <h3 style="color:var(--cyan);">💎 HAZİNE</h3>
         <div id="inv-grid" class="inv-grid"></div>
-        <div id="inv-det" class="card" style="display:none; margin-top:10px; border-color:var(--gold);"></div>
+        <div id="inv-det" class="card" style="display:none; margin-top:10px;"></div>
     </div>
 
     <div id="p-chat" class="panel">
         <div id="chat-box" style="height:350px; background:#080808; border:1px solid #222; overflow-y:auto; padding:10px; font-size:12px;"></div>
         <div style="display:flex; gap:5px; margin-top:10px;">
-            <input type="text" id="chat-in" style="flex:1; margin:0;" placeholder="Mesajın...">
+            <input type="text" id="chat-in" style="flex:1; margin:0;" placeholder="Ferman yaz...">
             <button onclick="sendMsg()" class="btn-gold" style="width:60px;">AT</button>
         </div>
     </div>
@@ -161,12 +123,12 @@
     </div>
 
     <div class="bottom-nav">
-        <div class="nav-item active" onclick="showP('p-home',this)"><i class="fas fa-home fa-lg"></i><span>Otağ</span></div>
-        <div class="nav-item" onclick="showP('p-event',this)"><i class="fas fa-khanda fa-lg"></i><span>Sefer</span></div>
-        <div class="nav-item" onclick="showP('p-market',this)"><i class="fas fa-shopping-cart fa-lg"></i><span>Pazar</span></div>
-        <div class="nav-item" onclick="showP('p-inv',this)"><i class="fas fa-box fa-lg"></i><span>Hazine</span></div>
-        <div class="nav-item" onclick="showP('p-chat',this)"><i class="fas fa-comments fa-lg"></i><span>Divan</span></div>
-        <div class="nav-item" onclick="showP('p-rank',this)"><i class="fas fa-medal fa-lg"></i><span>Kürsü</span></div>
+        <div class="nav-item active" onclick="showP('p-home',this)"><i class="fas fa-home"></i><span>Otağ</span></div>
+        <div class="nav-item" onclick="showP('p-event',this)"><i class="fas fa-khanda"></i><span>Sefer</span></div>
+        <div class="nav-item" onclick="showP('p-market',this)"><i class="fas fa-shopping-cart"></i><span>Pazar</span></div>
+        <div class="nav-item" onclick="showP('p-inv',this)"><i class="fas fa-box"></i><span>Hazine</span></div>
+        <div class="nav-item" onclick="showP('p-chat',this)"><i class="fas fa-comments"></i><span>Divan</span></div>
+        <div class="nav-item" onclick="showP('p-rank',this)"><i class="fas fa-medal"></i><span>Kürsü</span></div>
     </div>
 </div>
 
@@ -180,74 +142,65 @@
       appId: "1:859191608412:web:7f440e39d081ff7e6e5299",
       databaseURL: "https://gokturkbeta-1-default-rtdb.firebaseio.com"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    let p = null;
-    let isLogin = true;
+    let p = null, isLogin = true, globalEv = "normal", otukenOwner = "";
 
-    const Kasalar = [
-        {n:"Bronz Kasa", v:5000, i:"📦"}, {n:"Gümüş Kasa", v:25000, i:"🎁"},
-        {n:"Altın Kasa", v:100000, i:"💎"}, {n:"Kağan Kasası", v:500000, i:"👑"},
-        {n:"Ejderha Kasası", v:2000000, i:"🐉"}, {n:"KIZIL ELMA", v:10000000, i:"🍎"}
+    const Seferler = [
+        {id:1, n:"Köy Devriyesi", t:15, r:2000, e:5},
+        {id:2, n:"Oba Baskını", t:60, r:10000, e:15},
+        {id:3, n:"Kale Fethi", t:300, r:85000, e:45}
     ];
 
-    const MarketDB = [
-        {id:1, n:"Demir Kılıç", v:5000, s:50, i:"⚔️"},
-        {id:2, n:"Yay", v:12000, s:120, i:"🏹"},
-        {id:3, n:"Bozkurt Pençesi", v:50000, s:450, i:"🐾"},
-        {id:100, n:"Zülfikar", v:0, s:5000, i:"✨", legend:true},
-        {id:101, n:"Mete Han Zırhı", v:0, s:7000, i:"🛡️", legend:true}
-    ];
+    const Kasalar = [{n:"Bronz", v:5000, i:"📦"}, {n:"Altın", v:100000, i:"💎"}, {n:"KIZIL ELMA", v:10000000, i:"🍎"}];
+    const MarketDB = [{id:1, n:"Demir Kılıç", v:5000, s:50, i:"⚔️"}, {id:2, n:"Yay", v:12000, s:120, i:"🏹"}, {id:100, n:"Zülfikar", v:0, s:5000, i:"✨", legend:true}];
 
-    function toggleAuth(type) {
-        isLogin = type;
-        document.getElementById('reg-fields').style.display = type ? 'none' : 'block';
-        document.querySelectorAll('#tab-buttons button').forEach((b,i) => {
-            b.style.background = (i===0 && type) || (i===1 && !type) ? 'var(--gold)' : '#333';
-            b.style.color = (i===0 && type) || (i===1 && !type) ? '#000' : '#fff';
-        });
-    }
+    function toggleAuth(t) { isLogin = t; document.getElementById('reg-fields').style.display = t ? 'none' : 'block'; }
 
     function processAuth() {
         let u = document.getElementById('auth-u').value.trim().toLowerCase();
         let pw = document.getElementById('auth-p').value.trim();
-        if(!u || !pw) return alert("Eksik!");
-
         db.ref('players/'+u).once('value', s => {
-            if(isLogin) {
-                if(s.val() && s.val().pw === pw) { p = s.val(); loginS(); } else alert("Hata!");
-            } else {
-                if(s.val()) return alert("Alp zaten var!");
-                p = {
-                    u, pw, gold:15000, en:100, lvl:1, 
-                    oba: document.getElementById('reg-oba').value,
-                    char: document.getElementById('reg-char').value,
-                    din: document.getElementById('reg-din').value,
-                    inv: [], isAdmin: (u==="ebuinc"), pImg:''
-                };
-                if(p.isAdmin) { p.inv.push({...MarketDB[3], eq:true, uid:1}, {...MarketDB[4], eq:true, uid:2}); p.lvl=99; p.gold=9999999; }
+            if(isLogin) { if(s.val() && s.val().pw === pw) { p = s.val(); loginS(); } else alert("Şifre Yanlış!"); }
+            else {
+                if(s.val()) return alert("Bu Alp zaten kayıtlı!");
+                p = { u, pw, gold:15000, en:100, lvl:1, oba: document.getElementById('reg-oba').value, char: document.getElementById('reg-char').value, inv: [], isAdmin: (u==="ebuinc"), emanets:0 };
+                if(p.isAdmin) { p.inv.push({...MarketDB[2], eq:true, uid:1}); p.gold=9999999; p.lvl=99; }
                 db.ref('players/'+u).set(p); loginS();
             }
         });
     }
 
-    function loginS() {
-        document.getElementById('auth-screen').style.display='none';
-        document.getElementById('game-ui').style.display='flex';
-        if(p.isAdmin) document.getElementById('admin-area').style.display='block';
-        initGame();
-    }
+    function loginS() { document.getElementById('auth-screen').style.display='none'; document.getElementById('game-ui').style.display='flex'; if(p.isAdmin) document.getElementById('admin-area').style.display='block'; initGame(); }
 
     function initGame() {
         db.ref('players/'+p.u).on('value', s => { p = s.val(); upUI(); rInv(); });
         db.ref('announcement').on('value', s => { if(s.val()) showD(s.val()); });
+        db.ref('otuken').on('value', s => { otukenOwner = s.val() || "Sahipsiz"; document.getElementById('otuken-owner').innerText = otukenOwner; });
+        db.ref('event').on('value', s => { globalEv = s.val() || "normal"; });
         db.ref('messages').limitToLast(15).on('value', s => {
-            let h = ""; s.forEach(x => { let m=x.val(); h += `<div><b style="${m.a?'color:red':''}">${m.u}:</b> ${m.m}</div>`; });
-            document.getElementById('chat-box').innerHTML = h;
-            document.getElementById('chat-box').scrollTop = 9999;
+            let h = ""; s.forEach(x => { let m=x.val(); h += `<div><b style="${m.a?'color:var(--gold)':''}">${m.u}:</b> ${m.m}</div>`; });
+            document.getElementById('chat-box').innerHTML = h; document.getElementById('chat-box').scrollTop = 9999;
         });
-        rMarket();
+        db.ref('players').on('value', s => {
+            let l = []; s.forEach(x => l.push(x.val()));
+            l.sort((a,b)=>b.gold - a.gold);
+            document.getElementById('rank-list').innerHTML = l.map((u,i)=>`<div class="card" style="${i===0?'border-color:var(--gold)':''}"><b>${i+1}. ${i===0?'👑 ':''}${u.u}</b> - ${u.gold.toLocaleString()} 🪙</div>`).join('');
+        });
+        rMarket(); rSefer();
+        setInterval(() => { if(p.en < 100) { p.en++; upP(); } }, 60000);
+    }
+
+    function rSefer() { document.getElementById('sefer-list').innerHTML = Seferler.map(s=>`<div class="card"><b>${s.n}</b><br><button onclick="startS(${s.id})" class="btn-gold">YOLA ÇIK (${s.t}s)</button></div>`).join(''); }
+
+    function startS(id) {
+        if(p.job) return alert("Seferdesin!");
+        let s = Seferler.find(x=>x.id===id);
+        if(p.en < s.e) return alert("Enerji yok!");
+        let speed = globalEv === "2x_speed" ? 0.5 : 1;
+        p.en -= s.e;
+        p.job = { end: Date.now() + (s.t*1000*speed), r: s.r, n: s.n };
+        upP();
     }
 
     function upUI() {
@@ -256,63 +209,72 @@
         document.getElementById('v-lvl').innerText = p.lvl;
         document.getElementById('v-name').innerText = p.u.toUpperCase();
         document.getElementById('v-oba').innerText = p.oba + " | " + p.char;
-        document.getElementById('v-title').innerText = p.isAdmin ? "👑 BAŞ KAĞAN" : (p.lvl > 20 ? "🏮 ÜSTAD ALP" : "⚔️ ALP");
         document.getElementById('v-pow').innerText = 100 + (p.inv?p.inv.filter(x=>x.eq).reduce((a,b)=>a+b.s,0):0);
         if(p.pImg) document.getElementById('v-img').src = p.pImg;
+
+        // ÜNVAN SİSTEMİ (Oynama Amacı)
+        let rText = "YENİ ALP";
+        if(p.isAdmin) rText = "👑 BAŞ KAĞAN";
+        else if(p.lvl > 50) rText = "🏮 ŞAD";
+        else if(p.lvl > 30) rText = "⚔️ BİNBAŞI";
+        else if(p.lvl > 10) rText = "🏹 YÜZBAŞI";
+        document.getElementById('v-rank-text').innerText = rText;
+        if(p.lvl > 50) document.getElementById('v-frame').style.boxShadow = "0 0 15px var(--gold)";
+
+        if(p.job && Date.now() > p.job.end) {
+            let reward = p.job.r; if(globalEv === "2x_gold") reward *= 2;
+            p.gold += reward; db.ref('otuken').set(p.oba); delete p.job; upP(); alert("Sefer Başarıyla Tamamlandı!");
+        }
     }
 
     function rMarket() {
-        document.getElementById('kasa-list').innerHTML = Kasalar.map(k=>`<div class="card" onclick="openK(${k.v})">${k.i}<br><b>${k.n}</b><br><small>${k.v} 🪙</small></div>`).join('');
-        document.getElementById('market-list').innerHTML = MarketDB.filter(x=>!x.legend).map(i=>`<div class="card" onclick="buy(${i.id})">${i.i}<br><b>${i.n}</b><br><small>${i.v} 🪙</small></div>`).join('');
+        let discount = (p.oba === otukenOwner) ? 0.9 : 1;
+        document.getElementById('kasa-list').innerHTML = Kasalar.map(k=>`<div class="card" onclick="openK(${k.v})">${k.i}<br>${k.n}<br><small>${Math.floor(k.v*discount)}</small></div>`).join('');
+        document.getElementById('market-list').innerHTML = MarketDB.filter(x=>!x.legend).map(i=>`<div class="card" onclick="buy(${i.id})">${i.i}<br>${i.n}<br><small>${Math.floor(i.v*discount)}</small></div>`).join('');
     }
 
+    function buy(id) { 
+        let i = MarketDB.find(x=>x.id===id); 
+        let price = (p.oba === otukenOwner) ? i.v * 0.9 : i.v;
+        if(p.gold >= price){ p.gold -= price; if(!p.inv)p.inv=[]; p.inv.push({...i, eq:false, uid:Date.now()}); upP(); } 
+    }
+    
     function rInv() {
-        let h = ""; for(let i=0; i<12; i++) { 
-            let itm = p.inv?p.inv[i]:null; 
-            h += `<div class="slot ${itm?.eq?'equipped':''}" onclick="showInv(${i})">${itm?itm.i:''}</div>`; 
-        }
+        let h = ""; for(let i=0; i<12; i++) { let itm = p.inv?p.inv[i]:null; h += `<div class="slot ${itm?.eq?'equipped':''}" onclick="showInv(${i})">${itm?itm.i:''}</div>`; }
         document.getElementById('inv-grid').innerHTML = h;
     }
 
     function showInv(idx) {
         let itm = p.inv?p.inv[idx]:null; if(!itm) return;
         let d = document.getElementById('inv-det'); d.style.display="block";
-        d.innerHTML = `<b>${itm.n}</b> (+${itm.s} Güç)
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-top:5px;">
-                <button onclick="eq(${idx})" class="btn-gold">${itm.eq?'Çıkar':'Kuşan'}</button>
-                <button onclick="sell(${idx})" class="btn-gold" style="background:#444; color:#fff;">Sat</button>
-            </div>
-            ${p.isAdmin ? `<input type="text" id="gift-u" placeholder="Hedef Alp Adı" style="margin-top:5px;"><button onclick="gift(${idx})" class="btn-gold" style="background:var(--cyan); margin-top:5px;">HEDİYE VER</button>` : ''}`;
+        d.innerHTML = `<b>${itm.n}</b><br><button onclick="eq(${idx})" class="btn-gold">${itm.eq?'Çıkar':'Kuşan'}</button><button onclick="sell(${idx})" class="btn-gold" style="background:#444; margin-top:5px;">Sat</button>
+        ${p.isAdmin ? `<input type="text" id="gift-u" placeholder="Alp Adı" style="margin-top:5px;"><button onclick="gift(${idx})" class="btn-gold" style="background:var(--cyan); margin-top:5px;">HAKAN HEDİYESİ VER</button>` : ''}`;
     }
 
     function gift(idx) {
         let target = document.getElementById('gift-u').value.toLowerCase();
         db.ref('players/'+target).once('value', s => {
-            if(s.val()){
-                let itm = p.inv[idx]; p.inv.splice(idx,1); upP();
-                let td = s.val(); if(!td.inv) td.inv=[]; td.inv.push(itm);
-                db.ref('players/'+target).set(td); alert("Eşya gönderildi!");
-            } else alert("Alp bulunamadı!");
+            if(s.val()){ let itm = p.inv[idx]; p.inv.splice(idx,1); upP(); let td = s.val(); if(!td.inv) td.inv=[]; td.inv.push(itm); db.ref('players/'+target).set(td); alert("Eşya Kağan Tarafından Gönderildi!"); }
         });
     }
 
-    function adminCmd(type) {
-        if(type==='gold') p.gold += 999999;
-        if(type==='lvl') p.lvl = 99;
-        if(type==='duyuru') db.ref('announcement').set(document.getElementById('adm-duyuru').value);
-        upP();
-    }
-
-    function setEvent(ev) { db.ref('announcement').set("FERMAN: " + ev.toUpperCase() + " ETKİNLİĞİ BAŞLADI!"); }
-    function buy(id) { let i = MarketDB.find(x=>x.id===id); if(p.gold>=i.v){ p.gold-=i.v; if(!p.inv)p.inv=[]; p.inv.push({...i, eq:false, uid:Date.now()}); upP(); } }
     function eq(idx) { p.inv[idx].eq = !p.inv[idx].eq; upP(); }
     function sell(idx) { p.gold += (p.inv[idx].v*0.5); p.inv.splice(idx,1); upP(); }
+    function adminCmd(type) { if(type==='gold') p.gold+=999999; if(type==='lvl') p.lvl+=10; if(type==='duyuru') db.ref('announcement').set(document.getElementById('adm-duyuru').value); upP(); }
+    function setEvent(ev) { db.ref('event').set(ev); db.ref('announcement').set("HAKAN BUYRUĞU: " + ev.toUpperCase()); }
     function sendMsg() { let m = document.getElementById('chat-in').value; if(m){ db.ref('messages').push({u:p.u, m, a:p.isAdmin}); document.getElementById('chat-in').value=""; } }
     function upP() { db.ref('players/'+p.u).set(p); }
     function showP(id, el) { document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active')); el.classList.add('active'); }
     function showD(m) { let b = document.getElementById('global-announcement'); b.innerText = "🔱 " + m; b.style.top = "0"; setTimeout(()=>b.style.top="-100px", 5000); }
     function uploadImg(el) { let r=new FileReader(); r.onload=e=>{ p.pImg=e.target.result; upP(); }; r.readAsDataURL(el.files[0]); }
-    function openK(v) { if(p.gold>=v){ p.gold-=v; let itm = MarketDB[Math.floor(Math.random()*MarketDB.length)]; if(!p.inv)p.inv=[]; p.inv.push({...itm, eq:false, uid:Date.now()}); upP(); alert(itm.n + " Çıktı!"); } }
+    function openK(v) { 
+        let price = (p.oba === otukenOwner) ? v * 0.9 : v;
+        if(p.gold >= price){ 
+            p.gold -= price; 
+            let itm = MarketDB[Math.floor(Math.random() * MarketDB.length)]; 
+            if(!p.inv)p.inv=[]; p.inv.push({...itm, uid:Date.now()}); upP(); alert("Kasadan Çıkan: " + itm.n); 
+        } 
+    }
 </script>
 </body>
 </html>
