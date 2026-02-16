@@ -3,68 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GÖKTÜRK ONLINE V71.3 - GÖK SANCAK</title>
+    <title>GÖKTÜRK ONLINE V71.4 - BÜYÜK KAĞANLIK</title>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Metamorphous&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #ffd700; --bg: #05060a; --card: rgba(15, 20, 30, 0.9); --cyan: #00f2ff; --red: #ff3e3e; --green: #2ecc71; --legend: #ff00ff; }
-        * { box-sizing: border-box; font-family: 'Cinzel', serif; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; background: var(--bg); color: #f0f0f0; height: 100vh; overflow: hidden; }
-
-        /* ARKA PLAN GÖKTÜRK BAYRAĞI */
-        .gok-bayrak { 
-            position: fixed; inset: 0; pointer-events: none; z-index: 0; 
-            background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Flag_of_the_G%C3%B6kt%C3%BCrks.svg/1200px-Flag_of_the_G%C3%B6kt%C3%BCrks.svg.png') no-repeat center;
-            background-size: 80%; opacity: 0.08; filter: drop-shadow(0 0 20px var(--cyan)); 
+        :root { --gold: #ffd700; --bg: #05060a; --card: rgba(15, 20, 25, 0.95); --cyan: #00f2ff; --red: #ff3e3e; --green: #2ecc71; --legend: #ff00ff; }
+        * { box-sizing: border-box; font-family: 'Cinzel', serif; }
+        
+        body { 
+            margin: 0; background: var(--bg); color: #f0f0f0; height: 100vh; overflow: hidden;
+            background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://upload.wikimedia.org/wikipedia/commons/e/e4/Flag_of_the_G%C3%B6kt%C3%BCrks.svg');
+            background-size: cover; background-position: center; background-attachment: fixed;
         }
 
-        #global-announcement { position:fixed; top:-100px; left:0; width:100%; background:linear-gradient(90deg, transparent, var(--red), transparent); padding:10px; text-align:center; font-weight:bold; z-index:11000; transition:0.5s; text-shadow: 0 0 10px white; border-bottom: 2px solid var(--gold); }
-        #hakan-buyrugu { background:rgba(30, 10, 10, 0.95); color:var(--gold); font-size:10px; text-align:center; padding:8px; border-bottom: 2px solid #444; z-index: 1000; position: relative; }
+        #global-announcement { position:fixed; top:-100px; left:0; width:100%; background:linear-gradient(90deg, transparent, var(--red), transparent); padding:10px; text-align:center; font-weight:bold; z-index:11000; transition:0.5s; border-bottom: 2px solid var(--gold); }
+        #hakan-buyrugu { background:rgba(0, 0, 0, 0.9); color:var(--gold); font-size:11px; text-align:center; padding:10px; border-bottom: 2px solid var(--gold); z-index: 1000; position: relative; }
 
-        .container { width: 100%; max-width: 450px; height: 100vh; margin: auto; display: flex; flex-direction: column; background: rgba(0,0,0,0.8); position: relative; border-left: 1px solid #333; border-right: 1px solid #333; z-index: 1; }
-        .header { padding: 15px; background: #000; border-bottom: 2px solid var(--gold); display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; font-size: 11px; text-align: center; font-weight: bold; }
-        .card { background: var(--card); border: 1px solid #444; padding: 15px; border-radius: 15px; margin-bottom: 12px; backdrop-filter: blur(10px); position: relative; overflow: hidden; }
-        .panel { display: none; padding: 20px; height: calc(100vh - 180px); overflow-y: auto; padding-bottom: 100px; }
-        .active { display: block; animation: fadeIn 0.4s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .btn-gold { background: linear-gradient(135deg, #ffd700, #b8860b); color: #000; border: none; padding: 12px; border-radius: 10px; font-weight: 900; width: 100%; cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 0 #7a5c00; }
-        .btn-gold:active { transform: translateY(2px); box-shadow: 0 2px 0 #7a5c00; }
+        .container { width: 100%; max-width: 450px; height: 100vh; margin: auto; display: flex; flex-direction: column; background: rgba(0,0,0,0.75); position: relative; border-left: 1px solid #333; border-right: 1px solid #333; backdrop-filter: blur(5px); }
+        .header { padding: 12px; background: rgba(0,0,0,0.95); border-bottom: 1px solid #444; display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; font-size: 11px; text-align: center; }
         
-        /* ADMİN PANELLERİ AYRI RENKLER */
-        .admin-box { border: 1px solid var(--red); background: rgba(50, 0, 0, 0.2); margin-top: 10px; padding: 12px; border-radius: 12px; }
-        .admin-box.event { border-color: var(--cyan); background: rgba(0, 50, 50, 0.2); }
-        .admin-box.hazine { border-color: var(--legend); background: rgba(50, 0, 50, 0.2); }
-        .admin-title { font-size: 11px; font-weight: bold; margin-bottom: 8px; text-align: center; border-bottom: 1px solid currentColor; padding-bottom: 4px; }
+        .card { background: var(--card); border: 1px solid #333; padding: 12px; border-radius: 12px; margin-bottom: 10px; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .panel { display: none; padding: 15px; height: calc(100vh - 180px); overflow-y: auto; padding-bottom: 100px; }
+        .active { display: block; animation: fadeIn 0.3s; }
+
+        .btn-gold { background: linear-gradient(135deg, #ffd700, #b8860b); color: #000; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; box-shadow: 0 3px 0 #7a5c00; font-size: 11px; }
+        .btn-gold:active { transform: translateY(2px); box-shadow: 0 1px 0 #7a5c00; }
+        
+        .admin-box { border: 1px solid var(--red); background: rgba(40,0,0,0.4); margin-top: 10px; padding: 10px; border-radius: 10px; }
+        .admin-title { font-size: 10px; color: var(--gold); border-bottom: 1px solid #444; margin-bottom: 8px; text-align: center; }
 
         .inv-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .slot { aspect-ratio: 1; background: rgba(255,255,255,0.05); border: 1px solid #333; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
-        .slot.equipped { border: 2px solid var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+        .slot { aspect-ratio: 1; background: rgba(255,255,255,0.03); border: 1px solid #333; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .slot.equipped { border-color: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
 
-        .bottom-nav { position: absolute; bottom: 0; width: 100%; display: grid; grid-template-columns: repeat(6, 1fr); height: 80px; background: #000; border-top: 2px solid #222; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #555; font-size: 9px; }
+        .bottom-nav { position: absolute; bottom: 0; width: 100%; display: grid; grid-template-columns: repeat(6, 1fr); height: 75px; background: #000; border-top: 2px solid #222; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #666; font-size: 9px; }
         .nav-item.active { color: var(--gold); }
-        .nav-item i { font-size: 18px; margin-bottom: 4px; }
+        .nav-item i { font-size: 18px; margin-bottom: 3px; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-<div class="gok-bayrak"></div>
 <div id="global-announcement">🔱 HAKAN BUYRUĞU</div>
 
 <div id="auth-screen" style="position:fixed; inset:0; background:#000; z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:30px;">
-    <h1 style="color:var(--gold); font-family:'Metamorphous';">GÖKTÜRK ONLINE</h1>
-    <div class="card" style="width:100%; max-width:350px;">
-        <div style="display:flex; gap:10px; margin-bottom:15px;">
-            <button onclick="toggleAuth(true)" class="btn-gold">Giriş</button>
-            <button onclick="toggleAuth(false)" class="btn-gold" style="background:#222; color:#fff;">Kayıt</button>
-        </div>
-        <input type="text" id="auth-u" placeholder="Alp Adı" style="width:100%; padding:12px; margin-bottom:10px; background:#111; border:1px solid #444; color:#fff;">
-        <input type="password" id="auth-p" placeholder="Şifre" style="width:100%; padding:12px; margin-bottom:15px; background:#111; border:1px solid #444; color:#fff;">
-        <div id="reg-fields" style="display:none;"><select id="reg-oba" style="width:100%; padding:12px; background:#111; color:#fff;"><option value="Kayı">Kayı Obası</option><option value="Kınık">Kınık Obası</option></select></div>
-        <button onclick="processAuth()" class="btn-gold" style="margin-top:10px;">OTAĞA GİR</button>
+    <h1 style="color:var(--gold); font-size:35px; text-shadow: 0 0 10px var(--gold);">GÖKTÜRK</h1>
+    <div class="card" style="width:100%; max-width:320px; text-align:center;">
+        <input type="text" id="auth-u" placeholder="Alp Adı" style="width:100%; padding:12px; margin-bottom:10px; background:#111; color:#fff; border:1px solid #444;">
+        <input type="password" id="auth-p" placeholder="Şifre" style="width:100%; padding:12px; margin-bottom:15px; background:#111; color:#fff; border:1px solid #444;">
+        <button onclick="processAuth(true)" class="btn-gold">GİRİŞ YAP</button>
+        <button onclick="processAuth(false)" class="btn-gold" style="background:#222; color:#fff; margin-top:10px;">KAYIT OL</button>
     </div>
 </div>
 
@@ -78,72 +70,51 @@
     </div>
 
     <div id="p-home" class="panel active">
-        <div class="card" style="text-align:center; border:1px solid var(--gold);">
-            <div style="position:relative; width:80px; height:80px; margin:auto;">
-                <img id="v-img" src="https://via.placeholder.com/80" style="border-radius:50%; border:2px solid var(--gold);">
-                <i class="fas fa-edit" style="position:absolute; bottom:0; right:0; background:var(--gold); color:#000; padding:4px; border-radius:50%; font-size:10px;" onclick="document.getElementById('img-in').click()"></i>
+        <div class="card" style="text-align:center;">
+            <div style="position:relative; width:90px; height:90px; margin:auto; cursor:pointer;" onclick="document.getElementById('img-in').click()">
+                <img id="v-img" src="https://i.ibb.co/S76p8vB/wolf.png" style="width:100%; height:100%; border-radius:50%; border:2px solid var(--gold); object-fit:cover;">
+                <div style="position:absolute; bottom:0; right:0; background:var(--gold); color:#000; border-radius:50%; width:25px; height:25px; display:flex; align-items:center; justify-content:center;"><i class="fas fa-plus" style="font-size:10px;"></i></div>
             </div>
-            <input type="file" id="img-in" style="display:none" onchange="uploadImg(this)">
-            <h3 id="v-name" style="margin:10px 0 0 0;">---</h3>
-            <button onclick="doPray()" class="btn-gold" style="background:var(--green); color:#fff; margin-top:10px;">DUA ET (+20 ENERJİ)</button>
+            <input type="file" id="img-in" style="display:none" accept="image/*" onchange="uploadImg(this)">
+            <h3 id="v-name" style="margin:10px 0 5px 0;">ALP</h3>
+            <button onclick="doPray()" class="btn-gold" style="background:var(--green); color:#fff; box-shadow:0 3px 0 #1b7a43;">🙏 DUA ET (+20 ENERJİ)</button>
         </div>
 
         <div id="admin-karargah" style="display:none;">
-            <div class="admin-box">
-                <div class="admin-title" style="color:var(--red);">🔱 HAKAN PANELİ</div>
-                <button onclick="adminCmd('gold')" class="btn-gold" style="font-size:10px; margin-bottom:5px;">ALTIN YAĞDIR</button>
-                <input type="text" id="adm-duyuru" placeholder="Duyuru..." style="width:100%; padding:8px; background:#000; color:#fff; border:1px solid var(--red);">
-                <button onclick="adminCmd('duyuru')" class="btn-gold" style="background:var(--red); color:#fff; margin-top:5px;">FERMAN SAL</button>
-            </div>
-
-            <div class="admin-box event">
-                <div class="admin-title" style="color:var(--cyan);">🚩 ETKİNLİK PANELİ</div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px;">
-                    <button onclick="setEvent('2x_GOLD')" class="btn-gold" style="background:var(--cyan); color:#000; font-size:9px;">2X ALTIN</button>
-                    <button onclick="setEvent('2x_EXP')" class="btn-gold" style="background:var(--cyan); color:#000; font-size:9px;">2X TECRÜBE</button>
-                    <button onclick="setEvent('EN_FULL')" class="btn-gold" style="background:var(--cyan); color:#000; font-size:9px; grid-column:span 2;">ENEYJİ BAYRAMI (TÜM SERVER)</button>
-                </div>
-            </div>
-
-            <div class="admin-box hazine">
-                <div class="admin-title" style="color:var(--legend);">💎 HAZİNE PANELİ</div>
-                <input type="text" id="gift-u" placeholder="Alp Adı" style="width:100%; padding:8px; background:#000; color:#fff; border:1px solid var(--legend);">
-                <button onclick="adminGift()" class="btn-gold" style="background:var(--legend); color:#fff; margin-top:5px;">ZÜLFİKAR GÖNDER</button>
-            </div>
+            <div class="admin-box"><div class="admin-title">🔱 HAKAN PANELİ</div><button onclick="adminCmd('gold')" class="btn-gold">HAZİNEYİ DOLDUR</button></div>
+            <div class="admin-box" style="border-color:var(--cyan);"><div class="admin-title" style="color:var(--cyan);">🚩 ETKİNLİK</div><button onclick="setEvent('2X_GOLD')" class="btn-gold" style="background:var(--cyan); color:#000;">2X ALTIN ETKİNLİĞİ</button></div>
         </div>
     </div>
 
-    <div id="p-event" class="panel"><div id="sefer-list"></div></div>
+    <div id="p-event" class="panel">
+        <h3 style="color:var(--gold);">⚔️ AKINLAR</h3>
+        <div id="sefer-list"></div>
+    </div>
 
     <div id="p-market" class="panel">
-        <h3 style="color:var(--gold);">SİLAHHANE</h3>
-        <div id="market-items" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
-        <h3 style="color:var(--cyan); margin-top:20px;">KUTSAL EMANETLER</h3>
-        <div id="market-rare" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
+        <h3 style="color:var(--gold);">🛒 SİLAHHANE & EMANETLER</h3>
+        <div id="market-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
     </div>
 
     <div id="p-inv" class="panel">
         <div id="inv-grid" class="inv-grid"></div>
-        <div id="inv-det" class="card" style="display:none; margin-top:20px; border-color:var(--gold);"></div>
+        <div id="inv-det" class="card" style="display:none; margin-top:15px; border-color:var(--gold);"></div>
     </div>
 
     <div id="p-chat" class="panel">
-        <div id="chat-box" style="height:350px; background:rgba(0,0,0,0.5); border:1px solid #333; overflow-y:auto; padding:10px; border-radius:10px;"></div>
-        <div style="display:flex; gap:10px; margin-top:15px;">
-            <input type="text" id="chat-in" placeholder="Mesaj..." style="flex:1; padding:10px; background:#111; color:#fff; border-radius:8px;">
-            <button onclick="sendMsg()" class="btn-gold" style="width:60px;">AT</button>
-        </div>
+        <div id="chat-box" style="height:350px; background:rgba(0,0,0,0.6); overflow-y:auto; padding:10px; border-radius:10px; border:1px solid #333;"></div>
+        <div style="display:flex; gap:5px; margin-top:10px;"><input type="text" id="chat-in" placeholder="Mesaj..." style="flex:1; padding:12px; background:#111; color:#fff; border:1px solid #444; border-radius:8px;"><button onclick="sendMsg()" class="btn-gold" style="width:60px;">AT</button></div>
     </div>
 
     <div id="p-rank" class="panel"><div id="rank-list"></div></div>
 
     <div class="bottom-nav">
-        <div class="nav-item active" onclick="showP('p-home',this)"><i class="fas fa-campground"></i><span>Otağ</span></div>
-        <div class="nav-item" onclick="showP('p-event',this)"><i class="fas fa-swords"></i><span>Sefer</span></div>
-        <div class="nav-item" onclick="showP('p-market',this)"><i class="fas fa-store"></i><span>Pazar</span></div>
-        <div class="nav-item" onclick="showP('p-inv',this)"><i class="fas fa-gem"></i><span>Hazine</span></div>
-        <div class="nav-item" onclick="showP('p-chat',this)"><i class="fas fa-bolt"></i><span>Yağma</span></div>
-        <div class="nav-item" onclick="showP('p-rank',this)"><i class="fas fa-trophy"></i><span>Kürsü</span></div>
+        <div class="nav-item active" onclick="showP('p-home',this)"><i class="fas fa-home"></i><span>Otağ</span></div>
+        <div class="nav-item" onclick="showP('p-event',this)"><i class="fas fa-khanda"></i><span>Sefer</span></div>
+        <div class="nav-item" onclick="showP('p-market',this)"><i class="fas fa-shopping-cart"></i><span>Pazar</span></div>
+        <div class="nav-item" onclick="showP('p-inv',this)"><i class="fas fa-box-open"></i><span>Hazine</span></div>
+        <div class="nav-item" onclick="showP('p-chat',this)"><i class="fas fa-skull"></i><span>Yağma</span></div>
+        <div class="nav-item" onclick="showP('p-rank',this)"><i class="fas fa-medal"></i><span>Kürsü</span></div>
     </div>
 </div>
 
@@ -159,131 +130,140 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    let p = null, isLogin = true;
+    let p = null;
+
+    // 20 FARKLI EGZANTERİK İTEM
+    const AllItems = [
+        {id:1, n:"Demir Kılıç", v:2000, s:150, i:"⚔️", r:1},
+        {id:2, n:"Gök Yay", v:15000, s:1200, i:"🏹", r:1},
+        {id:3, n:"Zırhlı At", v:50000, s:4000, i:"🐎", r:1},
+        {id:4, n:"Bozkurt Başlığı", v:80000, s:6500, i:"🐺", r:2},
+        {id:5, n:"Mete Han'ın Islıklı Oku", v:120000, s:10000, i:"🎯", r:2},
+        {id:6, n:"Oğuz Kağan Baltası", v:250000, s:22000, i:"🪓", r:3},
+        {id:7, n:"Bilge Kağan Yazıtı", v:500000, s:45000, i:"📜", r:3},
+        {id:8, n:"Umay Ana Gerdanlığı", v:750000, s:60000, i:"📿", r:4},
+        {id:9, n:"Erlik Han'ın Maskesi", v:1000000, s:85000, i:"👺", r:4},
+        {id:10, n:"Gök Tanrı Asası", v:2000000, s:150000, i:"🪄", r:5},
+        {id:11, n:"Kül Tigin Kalkanı", v:45000, s:3500, i:"🛡️", r:2},
+        {id:12, n:"Tarkan Çizmesi", v:10000, s:800, i:"👢", r:1},
+        {id:13, n:"Hun Kaması", v:30000, s:2500, i:"🔪", r:2},
+        {id:14, n:"Altın Elbiseli Adam Zırhı", v:1500000, s:120000, i:"🟡", r:5},
+        {id:15, n:"Şaman Davulu", v:100000, s:9000, i:"🥁", r:3},
+        {id:16, n:"Göktürk Sancağı", v:3000000, s:250000, i:"🚩", r:5},
+        {id:17, n:"Asena'nın Dişi", v:500000, s:40000, i:"🦷", r:4},
+        {id:18, n:"Kızıl Elma", v:100000, s:12000, i:"🍎", r:3},
+        {id:19, n:"Dede Korkut Kopuzu", v:80000, s:7000, i:"🎸", r:2},
+        {id:20, n:"ZÜLFİKAR (Efsanevi)", v:0, s:500000, i:"✨", r:6}
+    ];
 
     const Seferler = [
-        {id:1, n:"🐺 Kurt Avı", t:15, r:3000, e:10, i:"🐺"},
-        {id:2, n:"🛣️ İpek Yolu", t:60, r:15000, e:20, i:"💰"},
-        {id:3, n:"🏰 Bizans Kalesi", t:300, r:100000, e:50, i:"🏰"},
-        {id:4, n:"🦅 Ötüken Fethi", t:1200, r:800000, e:100, i:"👑"}
+        {id:1, n:"🐺 Kurt Avı", t:10, r:2000, e:5, drop: [1,12]},
+        {id:2, n:"💰 İpek Yolu Baskını", t:45, r:12000, e:15, drop: [2,13]},
+        {id:3, n:"🏰 Bizans Kuşatması", t:180, r:65000, e:40, drop: [4,11]},
+        {id:4, n:"🐉 Çin Seddi Seferi", t:600, r:250000, e:75, drop: [5,15]},
+        {id:5, n:"👑 Ötüken Fethi", t:1800, r:1500000, e:100, drop: [7,17]}
     ];
 
-    const Weapons = [
-        {id:1, n:"+5 Kılıç", v:5000, s:200, i:"⚔️"},
-        {id:2, n:"+9 Yay", v:50000, s:2000, i:"🏹"},
-        {id:3, n:"Zırhlı At", v:150000, s:5000, i:"🐎"}
-    ];
-
-    const Rares = [
-        {id:10, n:"Göktürk Sancağı", v:750000, s:15000, i:"🚩"},
-        {id:100, n:"ZÜLFİKAR", v:0, s:75000, i:"✨", legend:true}
-    ];
-
-    function toggleAuth(t) { isLogin = t; document.getElementById('reg-fields').style.display = t ? 'none' : 'block'; }
-
-    function processAuth() {
+    function processAuth(isLogin) {
         let u = document.getElementById('auth-u').value.trim().toLowerCase();
         let pw = document.getElementById('auth-p').value.trim();
+        if(!u || !pw) return alert("Eksik bilgi!");
         db.ref('players/'+u).once('value', s => {
-            if(isLogin) { if(s.val() && s.val().pw === pw) { p = s.val(); loginS(); } else alert("Şifre Yanlış!"); }
-            else {
-                if(s.val()) return alert("Bu Alp mevcut!");
-                p = { u, pw, gold:20000, en:100, lvl:1, oba: document.getElementById('reg-oba').value, inv: [], isAdmin: (u==="ebuinc") };
-                if(p.isAdmin) { p.inv.push({...Rares[1], eq:true, uid:1}); p.gold=9999999; }
-                db.ref('players/'+u).set(p); loginS();
+            if(isLogin) {
+                if(s.val() && s.val().pw === pw) { p = s.val(); start(); } else alert("Hatalı giriş!");
+            } else {
+                if(s.val()) return alert("Bu ad alınmış!");
+                p = { u, pw, gold:15000, en:100, lvl:1, inv:[], isAdmin:(u==="ebuinc") };
+                db.ref('players/'+u).set(p); start();
             }
         });
     }
 
-    function loginS() { document.getElementById('auth-screen').style.display='none'; document.getElementById('game-ui').style.display='flex'; if(p.isAdmin) document.getElementById('admin-karargah').style.display='block'; initGame(); }
+    function start() {
+        document.getElementById('auth-screen').style.display='none';
+        document.getElementById('game-ui').style.display='flex';
+        if(p.isAdmin) document.getElementById('admin-karargah').style.display='block';
+        initListeners();
+    }
 
-    function initGame() {
-        db.ref('players/'+p.u).on('value', s => { p = s.val(); upUI(); rInv(); });
+    function initListeners() {
+        db.ref('players/'+p.u).on('value', s => { p = s.val(); updateUI(); renderInv(); });
         db.ref('announcement').on('value', s => { if(s.val()) showD(s.val()); });
         db.ref('buyruk').on('value', s => { document.getElementById('target-count').innerText = s.val() || 0; });
         db.ref('messages').limitToLast(15).on('value', s => {
             let h = ""; s.forEach(x => { 
                 let m=x.val(); 
-                h += `<div style="padding:10px; border-bottom:1px solid #222;">
-                        <b style="${m.a?'color:var(--gold)':''}">${m.u}:</b> ${m.m}
-                        <button onclick="yagmalat('${m.u}')" style="float:right; font-size:8px; background:var(--red); color:white; border:none; padding:3px 6px; border-radius:4px;">YAĞMALA</button>
-                      </div>`; 
+                h += `<div style="padding:8px; border-bottom:1px solid #222;"><b>${m.u}:</b> ${m.m} <button onclick="yagmalat('${m.u}')" style="float:right; background:var(--red); border:none; color:#fff; font-size:8px; padding:3px; border-radius:4px;">YAĞMA</button></div>`;
             });
             document.getElementById('chat-box').innerHTML = h; document.getElementById('chat-box').scrollTop = 9999;
         });
-        db.ref('players').on('value', s => {
-            let l = []; s.forEach(x => l.push(x.val())); l.sort((a,b)=>b.lvl - a.lvl);
-            document.getElementById('rank-list').innerHTML = l.map((u,i)=>`<div class="card"><b>${i+1}. ${u.u}</b> <span style="float:right;">Lvl ${u.lvl}</span></div>`).join('');
-        });
-        rMarket(); rSefer();
-        setInterval(updateTimer, 1000);
+        renderMarket(); renderSefer();
+        setInterval(tick, 1000);
     }
 
-    function updateTimer() {
-        if(!p.job) { rSefer(); return; }
+    function tick() {
+        if(!p.job) return;
         let diff = Math.ceil((p.job.end - Date.now()) / 1000);
         if(diff <= 0) {
-            p.gold += p.job.r; db.ref('buyruk').transaction(c => (c || 0) + 1);
-            delete p.job; upP(); alert("Sefer Başarıyla Tamamlandı!"); rSefer();
+            let s = Seferler.find(x=>x.id===p.job.sid);
+            p.gold += p.job.r;
+            // İtem Düşürme Şansı %20
+            if(Math.random() < 0.2) {
+                let dId = s.drop[Math.floor(Math.random()*s.drop.length)];
+                let item = AllItems.find(x=>x.id===dId);
+                if(!p.inv) p.inv = [];
+                p.inv.push({...item, uid:Date.now()});
+                alert("GANİMET: " + item.n + " kazandın!");
+            }
+            db.ref('buyruk').transaction(c => (c || 0) + 1);
+            delete p.job; updateP(); alert("Sefer Tamamlandı!");
         } else {
-            document.querySelectorAll('.s-btn').forEach(b => { b.disabled=true; b.innerText = diff + "s Kaldı"; });
+            document.querySelectorAll('.s-btn').forEach(b => { b.disabled=true; b.innerText = diff + "s"; });
         }
     }
 
-    function upUI() {
+    function updateUI() {
         document.getElementById('v-gold').innerText = p.gold.toLocaleString();
         document.getElementById('v-en').innerText = p.en;
-        document.getElementById('v-lvl').innerText = p.lvl;
-        document.getElementById('v-name').innerText = p.u.toUpperCase();
         document.getElementById('v-pow').innerText = 100 + (p.inv?p.inv.filter(x=>x.eq).reduce((a,b)=>a+b.s,0):0);
+        document.getElementById('v-name').innerText = p.u.toUpperCase();
         if(p.pImg) document.getElementById('v-img').src = p.pImg;
     }
 
-    function rSefer() {
-        document.getElementById('sefer-list').innerHTML = Seferler.map(s=>`
+    function renderSefer() {
+        document.getElementById('sefer-list').innerHTML = Seferler.map(s => `
             <div class="card" style="display:flex; align-items:center; gap:10px;">
-                <div style="font-size:25px;">${s.i}</div>
-                <div style="flex:1;"><b>${s.n}</b><br><small>${s.r} 🪙 | ${s.e} ⚡</small></div>
-                <button onclick="startS(${s.id})" class="btn-gold s-btn" style="width:100px; font-size:9px;">SEFERE ÇIK</button>
+                <b style="flex:1;">${s.n}<br><small>${s.r}🪙 | ${s.e}⚡</small></b>
+                <button onclick="startSefer(${s.id})" class="btn-gold s-btn" style="width:80px;">AKIN ET</button>
             </div>`).join('');
     }
 
-    function startS(id) {
+    function startSefer(id) {
         if(p.job) return;
         let s = Seferler.find(x=>x.id===id);
-        if(p.en < s.e) return alert("Enerji yetersiz!");
-        p.en -= s.e; p.job = { end: Date.now() + (s.t*1000), r: s.r }; upP();
+        if(p.en < s.e) return alert("Enerji yok!");
+        p.en -= s.e; p.job = { sid: id, end: Date.now() + (s.t*1000), r: s.r }; updateP();
     }
 
-    function rMarket() {
-        document.getElementById('market-items').innerHTML = Weapons.map(i=>`<div class="card" onclick="buy(${i.id},'w')">${i.i}<br><b>${i.n}</b><br><small>${i.v} 🪙</small></div>`).join('');
-        document.getElementById('market-rare').innerHTML = Rares.filter(x=>!x.legend).map(i=>`<div class="card" onclick="buy(${i.id},'r')">${i.i}<br><b>${i.n}</b><br><small>${i.v} 🪙</small></div>`).join('');
+    function renderMarket() {
+        document.getElementById('market-grid').innerHTML = AllItems.filter(x=>x.v > 0).map(i => `
+            <div class="card" onclick="buyItem(${i.id})">
+                ${i.i}<br><b>${i.n}</b><br><small>${i.v}🪙</small>
+            </div>`).join('');
     }
 
-    function buy(id, type) {
-        let i = type==='w' ? Weapons.find(x=>x.id===id) : Rares.find(x=>x.id===id);
-        if(confirm(i.n + " satın almak istediğine emin misin Alpım?")) {
-            if(p.gold >= i.v) { p.gold -= i.v; if(!p.inv)p.inv=[]; p.inv.push({...i, uid:Date.now(), eq:false}); upP(); }
-            else alert("Altının yetersiz!");
+    function buyItem(id) {
+        let itm = AllItems.find(x=>x.id===id);
+        if(confirm(itm.n + " Alansın mı?")) {
+            if(p.gold >= itm.v) { p.gold -= itm.v; if(!p.inv)p.inv=[]; p.inv.push({...itm, uid:Date.now()}); updateP(); }
+            else alert("Altın yetersiz!");
         }
     }
 
-    function yagmalat(target) {
-        if(target === p.u) return;
-        db.ref('players/'+target).once('value', s => {
-            let t = s.val();
-            let myPow = 100 + (p.inv?p.inv.filter(x=>x.eq).reduce((a,b)=>a+b.s,0):0);
-            let targetPow = 100 + (t.inv?t.inv.filter(x=>x.eq).reduce((a,b)=>a+b.s,0):0);
-            if(myPow > targetPow) {
-                let calinan = Math.floor(t.gold * 0.05); t.gold -= calinan; p.gold += calinan;
-                db.ref('players/'+target).set(t); upP(); alert(target + " yağmalandı! " + calinan + " altın aldın.");
-            } else alert("Gücün yetmedi!");
-        });
-    }
-
-    function rInv() {
-        let h = ""; for(let i=0; i<16; i++) { 
-            let itm = p.inv?p.inv[i]:null; h += `<div class="slot ${itm?.eq?'equipped':''}" onclick="showInv(${i})">${itm?itm.i:''}</div>`; 
+    function renderInv() {
+        let h = ""; for(let i=0; i<16; i++) {
+            let itm = p.inv?p.inv[i]:null;
+            h += `<div class="slot ${itm?.eq?'equipped':''}" onclick="showInv(${i})">${itm?itm.i:''}</div>`;
         }
         document.getElementById('inv-grid').innerHTML = h;
     }
@@ -291,32 +271,38 @@
     function showInv(idx) {
         let itm = p.inv?p.inv[idx]:null; if(!itm) return;
         let d = document.getElementById('inv-det'); d.style.display="block";
-        d.innerHTML = `<b>${itm.n}</b><br><button onclick="eq(${idx})" class="btn-gold" style="font-size:10px;">KUŞAN/ÇIKAR</button><button onclick="sell(${idx})" class="btn-gold" style="background:#333; color:#fff; margin-top:5px; font-size:10px;">SAT</button>`;
+        d.innerHTML = `<b>${itm.n}</b> (+${itm.s} Güç)<br><button onclick="eq(${idx})" class="btn-gold" style="width:45%;">KUŞAN</button> <button onclick="sell(${idx})" class="btn-gold" style="width:45%; background:#333;">SAT</button>`;
     }
 
-    function eq(idx) { p.inv[idx].eq = !p.inv[idx].eq; upP(); }
-    function sell(idx) { p.gold += (p.inv[idx].v*0.5); p.inv.splice(idx,1); upP(); }
-    function adminCmd(type) { if(type==='gold') p.gold+=1000000; if(type==='duyuru') db.ref('announcement').set(document.getElementById('adm-duyuru').value); upP(); }
-    function setEvent(ev) { 
-        if(ev==='EN_FULL') {
-            db.ref('players').once('value', s => {
-                s.forEach(x => { let d=x.val(); d.en=100; db.ref('players/'+d.u).set(d); });
-                db.ref('announcement').set("HAKAN ENERJİ DAĞITTI! TÜM ALPLER DİNÇLEŞTİ!");
-            });
-        } else { db.ref('announcement').set("ETKİNLİK BAŞLADI: " + ev); }
+    function eq(idx) { p.inv[idx].eq = !p.inv[idx].eq; updateP(); }
+    function sell(idx) { p.gold += (p.inv[idx].v*0.5); p.inv.splice(idx,1); updateP(); }
+    
+    function uploadImg(el) {
+        let reader = new FileReader();
+        reader.onload = function(e) { p.pImg = e.target.result; updateP(); };
+        reader.readAsDataURL(el.files[0]);
     }
-    function adminGift() {
-        let u = document.getElementById('gift-u').value.toLowerCase();
-        db.ref('players/'+u).once('value', s => {
-            if(s.val()){ let td=s.val(); if(!td.inv)td.inv=[]; td.inv.push({...Rares[1], uid:Date.now()}); db.ref('players/'+u).set(td); alert("Gönderildi!"); }
+
+    function yagmalat(t) {
+        if(t===p.u) return;
+        db.ref('players/'+t).once('value', s => {
+            let target = s.val();
+            let myP = 100 + (p.inv?p.inv.filter(x=>x.eq).reduce((a,b)=>a+b.s,0):0);
+            let trP = 100 + (target.inv?target.inv.filter(x=>x.eq).reduce((a,b)=>a+b.s,0):0);
+            if(myP > trP) {
+                let gain = Math.floor(target.gold * 0.1); target.gold -= gain; p.gold += gain;
+                db.ref('players/'+t).set(target); updateP(); alert(gain + " altın yağmalandı!");
+            } else alert("Yenildin!");
         });
     }
-    function sendMsg() { let m = document.getElementById('chat-in').value; if(m){ db.ref('messages').push({u:p.u, m, a:p.isAdmin}); document.getElementById('chat-in').value=""; } }
-    function upP() { db.ref('players/'+p.u).set(p); }
+
+    function sendMsg() { let m = document.getElementById('chat-in').value; if(m){ db.ref('messages').push({u:p.u, m}); document.getElementById('chat-in').value=""; } }
+    function updateP() { db.ref('players/'+p.u).set(p); }
     function showP(id, el) { document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active')); el.classList.add('active'); }
-    function showD(m) { let b = document.getElementById('global-announcement'); b.innerText = "🔱 " + m; b.style.top = "0"; setTimeout(()=>b.style.top="-100px", 5000); }
-    function uploadImg(el) { let r=new FileReader(); r.onload=e=>{ p.pImg=e.target.result; upP(); }; r.readAsDataURL(el.files[0]); }
-    function doPray() { if(p.en <= 80) { p.en += 20; upP(); alert("Dua kabul oldu!"); } }
+    function showD(m) { let b = document.getElementById('global-announcement'); b.innerText = "🔱 " + m; b.style.top = "0"; setTimeout(()=>b.style.top="-100px", 4000); }
+    function doPray() { if(p.en <= 80) { p.en += 20; updateP(); alert("Dua kabul oldu!"); } }
+    function adminCmd(t) { if(t==='gold') p.gold+=1000000; updateP(); }
+    function setEvent(e) { db.ref('announcement').set(e + " BAŞLADI!"); }
 </script>
 </body>
 </html>
